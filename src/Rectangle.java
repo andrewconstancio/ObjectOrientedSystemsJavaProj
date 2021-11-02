@@ -1,11 +1,11 @@
-public class CreateRectangle {
+public class Rectangle {
 
     private int width;
     private int height;
     private String color;
     Coordinates coordinates;
 
-    public CreateRectangle(int width, int height) {
+    public Rectangle(int width, int height) {
         this.width = width;
         this.height = height;
         this.color = "Red";

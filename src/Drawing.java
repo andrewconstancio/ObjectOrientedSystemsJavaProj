@@ -1,24 +1,21 @@
-import java.io.File;
 import java.util.ArrayList;
-
+import java.util.Arrays;
 
 public class Drawing {
     public static void main(String[] args) {
         String cmd = "";
+        ArrayList<Integer> dims = new ArrayList<Integer>();
+
         HelperFunctions helper = new HelperFunctions();
         for(int i = 0; i < args.length; i++ ) {
             if(!helper.isNumeric(args[i])) {
                 cmd += args[i].trim();
+            } else {
+                dims.add(Integer.parseInt(args[i]));
             }
         }
 
-        if(cmd.equals("CREATEREACTANGLE")) {
-            CreateRectangle rectangle = new CreateRectangle(4, 2);
-            System.out.printf("here!!!!");
-        }
+        System.out.println(dims.get(0));
 
-        if(cmd.equals("CREATECIRCLE")) {
-            CreateCircle circle = new CreateCircle(5);
-        }
     }
 }
