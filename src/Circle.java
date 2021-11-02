@@ -1,7 +1,7 @@
 public class Circle {
-    private int radius;
-    private String color;
-    Coordinates coordinates;
+    public int radius;
+    public String color;
+    public Coordinates coordinates;
 
     public Circle(int radius) {
         this.radius = radius;
