@@ -25,11 +25,10 @@ public class Shapes {
         }
     }
 
-    public void setCoordinates(int x, int y) {
-        this.coordinates = new Coordinates(x ,y);
-    }
-
     public void setColor(String color) {
         this.color = color;
+    }
+    public String getColor() {
+        return this.color;
     }
 }

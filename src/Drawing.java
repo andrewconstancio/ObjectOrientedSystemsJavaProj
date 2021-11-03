@@ -14,33 +14,7 @@ public class Drawing {
         String st;
         while ((st = br.readLine()) != null) {
             String[] cmd = st.split(" ", 4);
-            processCmd(cmd, arrShapes);
+            ProccessFunctions.processCmd(cmd, arrShapes, currentSelcted);
         }
-    }
-
-    public static void processCmd(String[] cmdArr, ArrayList arrShapes) {
-        String cmd = "";
-        ArrayList<Integer> dims = new ArrayList<Integer>();
-        HelperFunctions helper = new HelperFunctions();
-
-        for (String s : cmdArr) {
-            if (!HelperFunctions.isNumeric(s)) {
-                cmd += s.trim();
-            } else {
-                dims.add(Integer.parseInt(s));
-            }
-        }
-
-        if(cmd.equals("CREATERECTANGLE") || cmd.equals("CREATECIRCLE")) {
-            Shapes shape = new Shapes(cmd, dims);
-            arrShapes.add(shape);
-        } else if(cmd.equals("SELECT")) {
-            currentSelcted = dims.get(0);
-        } else if(cmd.contains("COLOR")) {
-            String color = cmd.replaceAll("COLOR", "");
-            Shapes currShape = (Shapes) arrShapes.get(currentSelcted);
-            currShape.setColor(color);
-        }
-
     }
 }
