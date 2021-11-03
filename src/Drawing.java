@@ -9,18 +9,18 @@ public class Drawing {
 
     public static void main(String[] args) throws IOException {
         File file = new File(args[0]);
+        ArrayList<Shapes> arrShapes = new ArrayList<Shapes>();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String st;
         while ((st = br.readLine()) != null) {
             String[] cmd = st.split(" ", 4);
-            processCmd(cmd);
+            processCmd(cmd, arrShapes);
         }
     }
 
-    public static void processCmd(String[] cmdArr) {
+    public static void processCmd(String[] cmdArr, ArrayList arrShapes) {
         String cmd = "";
         ArrayList<Integer> dims = new ArrayList<Integer>();
-        ArrayList<Shapes> arrShapes = new ArrayList<Shapes>();
         HelperFunctions helper = new HelperFunctions();
 
         for (String s : cmdArr) {
@@ -38,8 +38,8 @@ public class Drawing {
             currentSelcted = dims.get(0);
         } else if(cmd.contains("COLOR")) {
             String color = cmd.replaceAll("COLOR", "");
-            Shapes currShape = arrShapes.get(currentSelcted);
-
+            Shapes currShape = (Shapes) arrShapes.get(currentSelcted);
+            currShape.setColor(color);
         }
 
     }
