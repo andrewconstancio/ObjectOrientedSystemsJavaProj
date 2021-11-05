@@ -1,34 +1,36 @@
+import java.util.LinkedList;
+
 public class Shape {
     private Rectangle rectangle;
     private Circle circle;
-    private String color;
-    private Coordinates coordinates;
+    private LinkedList<String> colors;
+    private LinkedList<Coordinates> coordinates;
 
-    public Shape(Rectangle rectangle, String color, Coordinates coordinates) {
+    public Shape(Rectangle rectangle) {
         this.rectangle = rectangle;
-        this.color = color;
-        this.coordinates = coordinates;
+        this.colors = new LinkedList<String>();
+        this.coordinates = new LinkedList<Coordinates>();
     }
 
-    public Shape(Circle circle, String color, Coordinates coordinates) {
+    public Shape(Circle circle) {
         this.circle = circle;
-        this.color = color;
-        this.coordinates = coordinates;
+        this.colors = new LinkedList<String>();
+        this.coordinates = new LinkedList<Coordinates>();
     }
 
-    public String getColor() {
-        return color;
+    public LinkedList<String> getColors() {
+        return colors;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setColors(LinkedList<String> colors) {
+        this.colors = colors;
     }
 
-    public Coordinates getCoordinates() {
+    public LinkedList<Coordinates> getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(Coordinates coordinates) {
+    public void setCoordinates(LinkedList<Coordinates> coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -46,15 +48,5 @@ public class Shape {
 
     public void setCircle(Circle circle) {
         this.circle = circle;
-    }
-
-    @Override
-    public String toString() {
-        return "Shape{" +
-                "rectangle=" + rectangle +
-                ", circle=" + circle +
-                ", color='" + color + '\'' +
-                ", coordinates=" + coordinates +
-                '}';
     }
 }

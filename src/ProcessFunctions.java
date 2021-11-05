@@ -10,19 +10,23 @@ public class ProcessFunctions {
             if (arguments.get(0).equals("RECTANGLE")){
                 Rectangle newRectangle = new Rectangle(Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2)));
                 Coordinates newCoordinates = new Coordinates(0, 0);
-                Shape newShape = new Shape(newRectangle, "Red", newCoordinates);
+                Shape newShape = new Shape(newRectangle);
+                newShape.getColors().add("Red");
+                newShape.getCoordinates().add(newCoordinates);
                 arrShapes.add(newShape);
             }
             else if (arguments.get(0).equals("CIRCLE")){
                 Circle newCircle = new Circle(Integer.parseInt(arguments.get(1)));
                 Coordinates newCoordinates = new Coordinates(0, 0);
-                Shape newShape = new Shape(newCircle, "Blue", newCoordinates);
+                Shape newShape = new Shape(newCircle);
+                newShape.getColors().add("Blue");
+                newShape.getCoordinates().add(newCoordinates);
                 arrShapes.add(newShape);
             }
         }
         else if(function.equals("SELECT")) {
             int newSelectedShape = Integer.parseInt(arguments.get(0));
-            if (newSelectedShape <= arrShapes.size()){
+            if (newSelectedShape > 0 && newSelectedShape <= arrShapes.size()){
                 System.out.println("Shape " + newSelectedShape + " is now selected");
                 return newSelectedShape;
             }
@@ -30,58 +34,64 @@ public class ProcessFunctions {
                 System.out.println("ERROR: invalid shape for SELECT");
         }
         else if(function.equals("COLOR")) {
-            String color = arguments.get(0);
-            Shape shape = arrShapes.get(currentSelected - 1);
-
-            if (shape == null)
+            if (currentSelected == 0){
                 System.out.println("ERROR: no shape selected");
-            else
-                shape.setColor(color);
+                return 0;
+            }
+            Shape shape = arrShapes.get(currentSelected - 1);
+            String color = arguments.get(0);
+            shape.getColors().add(color);
         }
         else if(function.equals("MOVE")) {
-            Coordinates coordinates = new Coordinates(Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1)));
-            Shape shape = arrShapes.get(currentSelected - 1);
-
-            if (shape == null)
+            if (currentSelected == 0){
                 System.out.println("ERROR: no shape selected");
-            else
-                shape.setCoordinates(coordinates);
+                return 0;
+            }
+            Shape shape = arrShapes.get(currentSelected - 1);
+            Coordinates coordinates = new Coordinates(Integer.parseInt(arguments.get(0)), Integer.parseInt(arguments.get(1)));
+            shape.getCoordinates().add(coordinates);
         }
         else if (function.equals("DRAW")){
-            Shape shape = arrShapes.get(currentSelected - 1);
-
-            if (shape == null)
+            if (currentSelected == 0){
                 System.out.println("ERROR: no shape selected");
+                return 0;
+            }
+            Shape shape = arrShapes.get(currentSelected - 1);
 
             if(!(shape.getRectangle() == null)){
                 Rectangle r = shape.getRectangle();
-                System.out.println("Rectangle, Color: " + shape.getColor() + ", Origin: " + shape.getCoordinates() + ", Width: " + r.getWidth() + ", Height: " + r.getHeight());
+                LinkedList<String> colorHistory = shape.getColors();
+                LinkedList<Coordinates> coordinateHistory = shape.getCoordinates();
+                System.out.println("Rectangle, Color: " + colorHistory.getLast() + ", Origin: " + coordinateHistory.getLast() + ", Width: " + r.getWidth() + ", Height: " + r.getHeight());
             }
             else if(!(shape.getCircle() == null)){
                 Circle c = shape.getCircle();
-                System.out.println("Circle, Color: " + shape.getColor() + ", Origin: " + shape.getCoordinates() + ", Radius: " + c.getRadius());
+                LinkedList<String> colorHistory = shape.getColors();
+                LinkedList<Coordinates> coordinateHistory = shape.getCoordinates();
+                System.out.println("Circle, Color: " + colorHistory.getLast() + ", Origin: " + coordinateHistory.getLast() + ", Radius: " + c.getRadius());
             }
         }
         else if (function.equals("DELETE")){
-            Shape shape = arrShapes.get(currentSelected - 1);
-
-            if (shape == null)
+            if (currentSelected == 0){
                 System.out.println("ERROR: no shape selected");
-            else
-                arrShapes.remove(shape);
+                return 0;
+            }
+            Shape shape = arrShapes.get(currentSelected - 1);
+            arrShapes.remove(shape);
+            return 0;
         }
         else if(function.equals("DRAWSCENE")){
 
-            for(int i = 0; i < arrShapes.size(); i++){
-                Shape shape = arrShapes.get(i);
+            for (Shape shape : arrShapes) {
+                LinkedList<String> colorHistory = shape.getColors();
+                LinkedList<Coordinates> coordinateHistory = shape.getCoordinates();
 
-                if(!(shape.getRectangle() == null)){
+                if (!(shape.getRectangle() == null)) {
                     Rectangle r = shape.getRectangle();
-                    System.out.println("Rectangle, Color: " + shape.getColor() + ", Origin: " + shape.getCoordinates() + ", Width: " + r.getWidth() + ", Height: " + r.getHeight());
-                }
-                else if(!(shape.getCircle() == null)){
+                    System.out.println("Rectangle, Color: " + colorHistory.getLast() + ", Origin: " + coordinateHistory.getLast() + ", Width: " + r.getWidth() + ", Height: " + r.getHeight());
+                } else if (!(shape.getCircle() == null)) {
                     Circle c = shape.getCircle();
-                    System.out.println("Circle, Color: " + shape.getColor() + ", Origin: " + shape.getCoordinates() + ", Radius: " + c.getRadius());
+                    System.out.println("Circle, Color: " + colorHistory.getLast() + ", Origin: " + coordinateHistory.getLast() + ", Radius: " + c.getRadius());
                 }
             }
         }
@@ -91,21 +101,26 @@ public class ProcessFunctions {
             Iterator<CommandMemento> commandsInReverse = commandsInOrder.descendingIterator();
 
             System.out.println(deletedCommand.getSavedFunction());
+            Shape shape;
 
             switch (deletedCommand.getSavedFunction()) {
                 case "SELECT":
-                    //this dont work
-                    int previousSelected = 0;
+                    //Shape shape = arrShapes.get(currentSelected - 1);
+                    //this dont work gonna have to find something
 
                     while (commandsInReverse.hasNext()) {
                         CommandMemento previousCommand = commandsInReverse.next();
 
                         if(previousCommand.getSavedFunction().equals("SELECT")){
-                            if(currentSelected == 0){
-                                previousSelected = processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), arrShapes, 0);
-                            }
-                            System.out.println(previousSelected);
-                            return previousSelected;
+
+                            //System.out.println(previousSelected);
+                            //System.out.println(previousCommand.getSavedFunction() + previousCommand.getSavedArguments());
+
+                            //if(currentSelected == 0){
+                            //    previousSelected = processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), arrShapes, 0);
+                            //}
+                            //System.out.println(previousSelected);
+                            //return previousSelected;
                         }
 
                     }
@@ -113,22 +128,20 @@ public class ProcessFunctions {
                     //System.out.println("No Shape Selected");
                     break;
                 case "MOVE":
-                    //start this
-                    int OriginalShape = currentSelected;
-                    Shape shape = arrShapes.get(currentSelected - 1);
-
-                    /*
-                    while (commandsInReverse.hasNext()) {
-                        CommandMemento previousCommand = commandsInReverse.next();
-
-                        if(previousCommand.getSavedFunction().equals("MOVE")){
-                            int previousSelected = processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), arrShapes, currentSelected);
-
-                            if(previousSelected != 0)
-                                return previousSelected;
-                        }
+                    if (currentSelected == 0){
+                        System.out.println("ERROR: no shape selected");
+                        return 0;
                     }
-                     */
+                    shape = arrShapes.get(currentSelected - 1);
+                    shape.getCoordinates().removeLast();
+                    break;
+                case "COLOR":
+                    if (currentSelected == 0){
+                        System.out.println("ERROR: no shape selected");
+                        return 0;
+                    }
+                    shape = arrShapes.get(currentSelected - 1);
+                    shape.getColors().removeLast();
                     break;
             }
         }
