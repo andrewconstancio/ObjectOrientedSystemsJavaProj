@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Drawing {
@@ -11,19 +10,23 @@ public class Drawing {
     public static void main(String[] args) throws IOException {
         File file = new File(args[0]);
         ArrayList<Shape> arrShapes = new ArrayList<>();
+        ArrayList<Shape> deleteShapes = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String st;
 
         while ((st = br.readLine()) != null) {
             String[] cmd = st.split(" ", 4);
-            ArrayList<String> arguments = new ArrayList<>(Arrays.asList(cmd).subList(1, cmd.length));
+            ArrayList<String> arguments = new ArrayList<>();
 
-            currentSelected = ProcessFunctions.processCmd(cmd[0], arguments, arrShapes, currentSelected);
-
-            if (!cmd[0].equals("UNDO")){
+            if (!cmd[0].equals("UNDO")) {
+                //this code fills the linked list with command mementos
+                for (int i = 1; i < cmd.length; i++) {
+                    arguments.add(cmd[i]);
+                }
                 commandOriginater.Set(cmd[0], arguments);
                 commandCaretaker.addCommandMemento(commandOriginater.StoreInCommandMemento());
             }
+            currentSelected = ProcessFunctions.processCmd(cmd[0], arguments, arrShapes, commandOriginater, commandCaretaker,  deleteShapes, currentSelected);
         }
         //LinkedList<CommandMemento> commandsInOrder = commandOriginater.RestoreFromCommandMementoLL(commandCaretaker.getCommandMementos());
         //System.out.println(commandsInOrder);

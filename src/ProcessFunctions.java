@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class ProcessFunctions {
 
-    public static int processCmd(String function, ArrayList<String> arguments, ArrayList<Shape> arrShapes, int currentSelected) {
+    public static int processCmd(String function, ArrayList<String> arguments, ArrayList<Shape> arrShapes,CommandOriginater commandOriginater,CommandCaretaker commandCaretaker, ArrayList<Shape> deleteShapes, int currentSelected) {
 
         if (function.equals("CREATE")){
             if (arguments.get(0).equals("RECTANGLE")){
@@ -26,8 +26,10 @@ public class ProcessFunctions {
         }
         else if(function.equals("SELECT")) {
             int newSelectedShape = Integer.parseInt(arguments.get(0));
-            if (newSelectedShape > 0 && newSelectedShape <= arrShapes.size())
+            if (newSelectedShape > 0 && newSelectedShape <= arrShapes.size()){
+                System.out.println("Shape " + newSelectedShape + " is now selected");
                 return newSelectedShape;
+            }
             else
                 System.out.println("ERROR: invalid shape for SELECT");
         }
@@ -75,6 +77,7 @@ public class ProcessFunctions {
                 return 0;
             }
             Shape shape = arrShapes.get(currentSelected - 1);
+            deleteShapes.add(shape);
             arrShapes.remove(shape);
             return 0;
         }
@@ -97,20 +100,32 @@ public class ProcessFunctions {
             CommandMemento deletedCommand = Drawing.commandCaretaker.deleteCommandMemento();
             LinkedList<CommandMemento> commandsInOrder = Drawing.getCommandOriginater().RestoreFromCommandMementoLL(Drawing.getCommandCaretaker().getCommandMementos());
             Iterator<CommandMemento> commandsInReverse = commandsInOrder.descendingIterator();
+
             Shape shape;
 
             switch (deletedCommand.getSavedFunction()) {
                 case "SELECT":
+                    //Shape shape = arrShapes.get(currentSelected - 1);
+                    //this dont work gonna have to find something
+
                     while (commandsInReverse.hasNext()) {
                         CommandMemento previousCommand = commandsInReverse.next();
 
                         if(previousCommand.getSavedFunction().equals("SELECT")){
-                            int newSelectedShape = processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), arrShapes, 0);
-                            if (newSelectedShape > 0 && newSelectedShape <= arrShapes.size())
-                                return newSelectedShape;
+
+                            //System.out.println(previousSelected);
+                            //System.out.println(previousCommand.getSavedFunction() + previousCommand.getSavedArguments());
+
+                            //if(currentSelected == 0){
+                            //    previousSelected = processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), arrShapes, 0);
+                            //}
+                            //System.out.println(previousSelected);
+                            //return previousSelected;
                         }
+
                     }
-                    System.out.println("No Shape Selected");
+                    //figure out if only good commands go into draw list, because it ain't working with bad commands in there
+                    //System.out.println("No Shape Selected");
                     break;
                 case "MOVE":
                     if (currentSelected == 0){
@@ -129,13 +144,22 @@ public class ProcessFunctions {
                     shape.getColors().removeLast();
                     break;
                 case "CREATE":
-
+                    ProcessFunctions.processCmd("DELETE", arguments, arrShapes,commandOriginater, commandCaretaker, deleteShapes, currentSelected);
                     break;
                 case "DELETE":
-
+                    shape = deleteShapes.get(deleteShapes.size() - 1);
+                    String cmd;
+                    LinkedList<Coordinates> coordinateHistory = shape.getCoordinates();
+                    ArrayList<String> args = new ArrayList<>();
+                    if(!(shape.getRectangle() == null)){
+                        args.add("RECTANGLE");
+                    } else {
+                        args.add("CIRCLE");
+                    }
+                    commandOriginater.Set("CREATE", args);
+                    commandCaretaker.addCommandMemento(commandOriginater.StoreInCommandMemento());
+                    ProcessFunctions.processCmd("CREATE", args, arrShapes, commandOriginater, commandCaretaker, deleteShapes, currentSelected);
                     break;
-                default:
-                    //Undoing DRAW or DRAWSCENE has no effect
             }
         }
         return currentSelected;

@@ -1,7 +1,7 @@
 import java.util.LinkedList;
 
 public class CommandCaretaker {
-    private LinkedList<CommandMemento> savedCommands = new LinkedList<>();
+    public static LinkedList<CommandMemento> savedCommands = new LinkedList<>();
 
     public void addCommandMemento(CommandMemento command){
         savedCommands.add(command);
