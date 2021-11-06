@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Drawing {
@@ -15,19 +16,14 @@ public class Drawing {
 
         while ((st = br.readLine()) != null) {
             String[] cmd = st.split(" ", 4);
-            ArrayList<String> arguments = new ArrayList<>();
+            ArrayList<String> arguments = new ArrayList<>(Arrays.asList(cmd).subList(1, cmd.length));
 
+            currentSelected = ProcessFunctions.processCmd(cmd[0], arguments, arrShapes, currentSelected);
 
-            if (!cmd[0].equals("UNDO")) {
-                //this code fills the linked list with command mementos
-                for (int i = 1; i < cmd.length; i++) {
-                    arguments.add(cmd[i]);
-                }
+            if (!cmd[0].equals("UNDO")){
                 commandOriginater.Set(cmd[0], arguments);
                 commandCaretaker.addCommandMemento(commandOriginater.StoreInCommandMemento());
             }
-            currentSelected = ProcessFunctions.processCmd(cmd[0], arguments, arrShapes, currentSelected);
-
         }
         //LinkedList<CommandMemento> commandsInOrder = commandOriginater.RestoreFromCommandMementoLL(commandCaretaker.getCommandMementos());
         //System.out.println(commandsInOrder);

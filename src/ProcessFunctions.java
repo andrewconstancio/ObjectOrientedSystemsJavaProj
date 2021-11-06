@@ -26,10 +26,8 @@ public class ProcessFunctions {
         }
         else if(function.equals("SELECT")) {
             int newSelectedShape = Integer.parseInt(arguments.get(0));
-            if (newSelectedShape > 0 && newSelectedShape <= arrShapes.size()){
-                System.out.println("Shape " + newSelectedShape + " is now selected");
+            if (newSelectedShape > 0 && newSelectedShape <= arrShapes.size())
                 return newSelectedShape;
-            }
             else
                 System.out.println("ERROR: invalid shape for SELECT");
         }
@@ -99,33 +97,20 @@ public class ProcessFunctions {
             CommandMemento deletedCommand = Drawing.commandCaretaker.deleteCommandMemento();
             LinkedList<CommandMemento> commandsInOrder = Drawing.getCommandOriginater().RestoreFromCommandMementoLL(Drawing.getCommandCaretaker().getCommandMementos());
             Iterator<CommandMemento> commandsInReverse = commandsInOrder.descendingIterator();
-
-            System.out.println(deletedCommand.getSavedFunction());
             Shape shape;
 
             switch (deletedCommand.getSavedFunction()) {
                 case "SELECT":
-                    //Shape shape = arrShapes.get(currentSelected - 1);
-                    //this dont work gonna have to find something
-
                     while (commandsInReverse.hasNext()) {
                         CommandMemento previousCommand = commandsInReverse.next();
 
                         if(previousCommand.getSavedFunction().equals("SELECT")){
-
-                            //System.out.println(previousSelected);
-                            //System.out.println(previousCommand.getSavedFunction() + previousCommand.getSavedArguments());
-
-                            //if(currentSelected == 0){
-                            //    previousSelected = processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), arrShapes, 0);
-                            //}
-                            //System.out.println(previousSelected);
-                            //return previousSelected;
+                            int newSelectedShape = processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), arrShapes, 0);
+                            if (newSelectedShape > 0 && newSelectedShape <= arrShapes.size())
+                                return newSelectedShape;
                         }
-
                     }
-                    //figure out if only good commands go into draw list, because it ain't working with bad commands in there
-                    //System.out.println("No Shape Selected");
+                    System.out.println("No Shape Selected");
                     break;
                 case "MOVE":
                     if (currentSelected == 0){
@@ -143,6 +128,14 @@ public class ProcessFunctions {
                     shape = arrShapes.get(currentSelected - 1);
                     shape.getColors().removeLast();
                     break;
+                case "CREATE":
+
+                    break;
+                case "DELETE":
+
+                    break;
+                default:
+                    //Undoing DRAW or DRAWSCENE has no effect
             }
         }
         return currentSelected;
