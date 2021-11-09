@@ -26,18 +26,4 @@ public class CommandOriginater {
         }
         return commands;
     }
-
-    /*
-    //this function returns string representation of what is in the list
-    public String RestoreFromCommandMemento(LinkedList<CommandMemento> commandMementos){
-        String commandList = "";
-
-        for(int i = 0; i < commandMementos.size(); i++){
-            function = commandMementos.get(i).getSavedFunction();
-            arguments = commandMementos.get(i).getSavedArguments();
-            commandList += function + " " + arguments + "\n";
-        }
-        return commandList;
-    }
-     */
 }

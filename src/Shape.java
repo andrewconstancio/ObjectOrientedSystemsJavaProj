@@ -5,6 +5,7 @@ public class Shape {
     private Circle circle;
     private LinkedList<String> colors;
     private LinkedList<Coordinates> coordinates;
+    private int savedIndex;
 
     public Shape(Rectangle rectangle) {
         this.rectangle = rectangle;
@@ -49,4 +50,10 @@ public class Shape {
     public void setCircle(Circle circle) {
         this.circle = circle;
     }
+
+    public void setSavedIndex(int index) {
+        this.savedIndex = index;
+    }
+
+    public int getSavedIndex() {return this.savedIndex;}
 }

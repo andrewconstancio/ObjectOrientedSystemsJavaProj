@@ -31,10 +31,8 @@ public class Drawing {
                 }
             }
 
-            currentSelected = ProcessFunctions.processCmd(cmd[0], arguments, 0, 0, color, arrShapes, commandOriginater, commandCaretaker,  deleteShapes, currentSelected);
+            currentSelected = ProcessFunctions.processCmd(cmd[0], arguments, 0, 0, -1, color, arrShapes, commandOriginater, commandCaretaker,  deleteShapes, currentSelected);
         }
-        //LinkedList<CommandMemento> commandsInOrder = commandOriginater.RestoreFromCommandMementoLL(commandCaretaker.getCommandMementos());
-        //System.out.println(commandsInOrder);
     }
 
     public static CommandCaretaker getCommandCaretaker() {

@@ -4,24 +4,38 @@ import java.util.LinkedList;
 
 public class ProcessFunctions {
 
-    public static int processCmd(String function, ArrayList<String> arguments, int xCord, int yCord, String colorArg, ArrayList<Shape> arrShapes,CommandOriginater commandOriginater,CommandCaretaker commandCaretaker, ArrayList<Shape> deleteShapes, int currentSelected) {
+    public static int processCmd(String function, ArrayList<String> arguments, int xCord, int yCord, int indexSaved, String colorArg,
+                                 ArrayList<Shape> arrShapes,CommandOriginater commandOriginater,CommandCaretaker commandCaretaker,
+                                 ArrayList<Shape> deleteShapes, int currentSelected) {
 
         if (function.equals("CREATE")){
             if (arguments.get(0).equals("RECTANGLE")){
                 Rectangle newRectangle = new Rectangle(Integer.parseInt(arguments.get(1)), Integer.parseInt(arguments.get(2)));
                 Coordinates newCoordinates = new Coordinates(xCord, yCord);
                 Shape newShape = new Shape(newRectangle);
-                newShape.getColors().add(colorArg);
-                newShape.getCoordinates().add(newCoordinates);
-                arrShapes.add(newShape);
+                if(indexSaved == -1 || indexSaved > (arrShapes.size() -1)) {
+                    newShape.getColors().add(colorArg);
+                    newShape.getCoordinates().add(newCoordinates);
+                    arrShapes.add(newShape);
+                } else {
+                    newShape.getColors().add(indexSaved, colorArg);
+                    newShape.getCoordinates().add(indexSaved,newCoordinates);
+                    arrShapes.add(indexSaved, newShape);
+                }
             }
             else if (arguments.get(0).equals("CIRCLE")){
                 Circle newCircle = new Circle(Integer.parseInt(arguments.get(1)));
                 Coordinates newCoordinates = new Coordinates(xCord, yCord);
                 Shape newShape = new Shape(newCircle);
-                newShape.getColors().add(colorArg);
-                newShape.getCoordinates().add(newCoordinates);
-                arrShapes.add(newShape);
+                if(indexSaved == -1 || indexSaved > (arrShapes.size() -1)) {
+                    newShape.getColors().add(colorArg);
+                    newShape.getCoordinates().add(newCoordinates);
+                    arrShapes.add(newShape);
+                } else {
+                    newShape.getColors().add(indexSaved, colorArg);
+                    newShape.getCoordinates().add(indexSaved,newCoordinates);
+                    arrShapes.add(indexSaved, newShape);
+                }
             }
         }
         else if(function.equals("SELECT")) {
@@ -76,6 +90,7 @@ public class ProcessFunctions {
                 return 0;
             }
             Shape shape = arrShapes.get(currentSelected - 1);
+            shape.setSavedIndex(currentSelected - 1);
             deleteShapes.add(shape);
             arrShapes.remove(shape);
             return 0;
@@ -106,7 +121,7 @@ public class ProcessFunctions {
                         CommandMemento previousCommand = commandsInReverse.next();
 
                         if(previousCommand.getSavedFunction().equals("SELECT")){
-                            int newSelectedShape = ProcessFunctions.processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), 0, 0, "Red", arrShapes,commandOriginater, commandCaretaker, deleteShapes, currentSelected);
+                            int newSelectedShape = ProcessFunctions.processCmd(previousCommand.getSavedFunction(), previousCommand.getSavedArguments(), 0, 0, -1, "Red", arrShapes,commandOriginater, commandCaretaker, deleteShapes, currentSelected);
                             if (newSelectedShape > 0 && newSelectedShape <= arrShapes.size())
                                 return newSelectedShape;
                         }
@@ -130,12 +145,12 @@ public class ProcessFunctions {
                     shape.getColors().removeLast();
                     break;
                 case "CREATE":
-                    ProcessFunctions.processCmd("DELETE", arguments, 0, 0, "Red", arrShapes,commandOriginater, commandCaretaker, deleteShapes, currentSelected);
+                    ProcessFunctions.processCmd("DELETE", arguments, 0, 0, -1, "Red", arrShapes,commandOriginater, commandCaretaker, deleteShapes, currentSelected);
                     break;
                 case "DELETE":
                     shape = deleteShapes.get(deleteShapes.size() - 1);
-                    deleteShapes.remove(deleteShapes.size() - 1);
                     ArrayList<String> args = new ArrayList<>();
+                    int delIndexShape = shape.getSavedIndex();
                     if(!(shape.getRectangle() == null)){
                         args.add("RECTANGLE");
                         String width = String.valueOf(shape.getRectangle().getWidth());
@@ -153,7 +168,7 @@ public class ProcessFunctions {
                     int x = cord.getX();
                     int y = cord.getY();
                     String colorRestore = shape.getColors().getLast();
-                    ProcessFunctions.processCmd("CREATE", args, x, y, colorRestore, arrShapes, commandOriginater, commandCaretaker, deleteShapes, currentSelected);
+                    ProcessFunctions.processCmd("CREATE", args, x, y, delIndexShape, colorRestore, arrShapes, commandOriginater, commandCaretaker, deleteShapes, currentSelected);
                     break;
             }
         }
